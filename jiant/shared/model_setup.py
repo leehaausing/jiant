@@ -18,7 +18,8 @@ def get_tokenizer(model_type, tokenizer_path):
     """
     model_arch = ModelArchitectures.from_model_type(model_type)
     tokenizer_class = resolve_tokenizer_class(model_type)
-    if model_arch in [ModelArchitectures.BERT]:
+    if model_arch in [ModelArchitectures.BERT,
+                      ModelArchitectures.DISTILBERT,]:
         if "-cased" in model_type:
             do_lower_case = False
         elif "-uncased" in model_type:
@@ -32,7 +33,6 @@ def get_tokenizer(model_type, tokenizer_path):
         ModelArchitectures.BART,
         ModelArchitectures.MBART,
         ModelArchitectures.ELECTRA,
-        ModelArchitectures.DISTILBERT,
     ]:
         do_lower_case = False
     elif model_arch in [ModelArchitectures.ALBERT]:
