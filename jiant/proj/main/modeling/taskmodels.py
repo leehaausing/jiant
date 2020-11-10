@@ -308,6 +308,7 @@ def get_output_from_encoder(encoder, input_ids, segment_ids, input_mask) -> Enco
         ModelArchitectures.ROBERTA,
         ModelArchitectures.ALBERT,
         ModelArchitectures.XLM_ROBERTA,
+        ModelArchitectures.DISTILBERT,
     ]:
         pooled, unpooled, other = get_output_from_standard_transformer_models(
             encoder=encoder, input_ids=input_ids, segment_ids=segment_ids, input_mask=input_mask,
