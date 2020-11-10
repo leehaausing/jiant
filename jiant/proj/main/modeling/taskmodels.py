@@ -308,7 +308,6 @@ def get_output_from_encoder(encoder, input_ids, segment_ids, input_mask) -> Enco
         ModelArchitectures.ROBERTA,
         ModelArchitectures.ALBERT,
         ModelArchitectures.XLM_ROBERTA,
-        ModelArchitectures.DISTILBERT,
     ]:
         pooled, unpooled, other = get_output_from_standard_transformer_models(
             encoder=encoder, input_ids=input_ids, segment_ids=segment_ids, input_mask=input_mask,
@@ -323,6 +322,10 @@ def get_output_from_encoder(encoder, input_ids, segment_ids, input_mask) -> Enco
     ]:
         pooled, unpooled, other = get_output_from_bart_models(
             encoder=encoder, input_ids=input_ids, input_mask=input_mask,
+        )
+    elif model_arch in == ModelArchitectures.DISTILBERT:
+        pooled, unpooled, output = get_output_from_distilbert(
+            encoder=encoder, input_ids=input_ids, input_mask=input_masks,
         )
     else:
         raise KeyError(model_arch)
@@ -367,6 +370,11 @@ def get_output_from_electra(encoder, input_ids, segment_ids, input_mask):
     pooled = unpooled[:, 0, :]
     return pooled, unpooled, output
 
+def get_output_from_distilbert(encoder, input_ids, input_mask):
+    output = encoder(input_ids=input_ids, attention_mask=input_mask)
+    unpooled = output[0]
+    pooled = unpooled[:, 0, :]
+    return pooled, unpooled, output
 
 def compute_mlm_loss(logits, masked_lm_labels):
     vocab_size = logits.shape[-1]
