@@ -325,7 +325,7 @@ def get_output_from_encoder(encoder, input_ids, segment_ids, input_mask) -> Enco
         )
     elif model_arch == ModelArchitectures.DISTILBERT:
         pooled, unpooled, output = get_output_from_distilbert(
-            encoder=encoder, input_ids=input_ids, input_mask=input_masks,
+            encoder=encoder, input_ids=input_ids, input_mask=input_mask,
         )
     else:
         raise KeyError(model_arch)
