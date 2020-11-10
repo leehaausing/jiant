@@ -83,6 +83,7 @@ def get_model_and_tokenizer_classes(
         "bart": (transformers.BartForConditionalGeneration, transformers.BartTokenizer),
         "mbart": (transformers.BartForConditionalGeneration, transformers.MBartTokenizer),
         "electra": (transformers.ElectraForPreTraining, transformers.ElectraTokenizer),
+        "distilbert": (transformers.DistilBertForMaskedLM, transformers.DistilBertTokenizer)
     }
     if model_type.split("-")[0] in class_lookup:
         return class_lookup[model_type.split("-")[0]]
