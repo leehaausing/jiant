@@ -15,6 +15,7 @@ class ModelArchitectures(Enum):
     BART = 6
     MBART = 7
     ELECTRA = 8
+    DISTILBERT = 9
 
     @classmethod
     def from_model_type(cls, model_type: str):
@@ -45,6 +46,8 @@ class ModelArchitectures(Enum):
             return cls.MBART
         elif model_type.startswith("electra-"):
             return cls.ELECTRA
+        elif model_type.startswith("distilbert-"):
+            return cls.DISTILBERT
         else:
             raise KeyError(model_type)
 
@@ -70,6 +73,10 @@ class ModelArchitectures(Enum):
             return bart_or_mbart_model_heuristic(model_config=transformers_model.config)
         elif isinstance(transformers_model, transformers.modeling_electra.ElectraPreTrainedModel):
             return cls.ELECTRA
+        if isinstance(
+            transformers_model, transformers.BertPreTrainedModel
+        ) and transformers_model.__class__.__name__.startswith("DistilBert"):
+            return cls.DISTILBERT
         else:
             raise KeyError(str(transformers_model))
 
@@ -91,6 +98,8 @@ class ModelArchitectures(Enum):
             return cls.MBART
         elif isinstance(tokenizer_class, transformers.ElectraTokenizer):
             return cls.ELECTRA
+        elif isinstance(tokenizer_class, transformers.DistilBertTokenizer):
+            return cls.DISTILBERT
         else:
             raise KeyError(str(tokenizer_class))
 
@@ -105,6 +114,7 @@ class ModelArchitectures(Enum):
             cls.BART,
             cls.MBART,
             cls.ELECTRA,
+            cls.DISTILBERT,
         ]
 
     @classmethod
@@ -143,6 +153,11 @@ class ModelArchitectures(Enum):
             and encoder.__class__.__name__ == "ElectraModel"
         ):
             return cls.ELECTRA
+        if (
+            isinstance(encoder, transformers.DistilBertModel)
+            and encoder.__class__.__name__ == "DistilBertModel"
+        ):
+            return cls.DISTILBERT
         else:
             raise KeyError(type(encoder))
 
@@ -277,6 +292,19 @@ def build_featurization_spec(model_type, max_seq_length):
             sequence_b_segment_id=1,
             sep_token_extra=False,
         )
+    elif model_arch == ModelArchitectures.DISTILBERT:
+        return FeaturizationSpec(
+            max_seq_length=max_seq_length,
+            cls_token_at_end=False,
+            pad_on_left=False,
+            cls_token_segment_id=0,
+            pad_token_segment_id=0,
+            pad_token_id=0,
+            pad_token_mask_id=0,
+            sequence_a_segment_id=0,
+            sequence_b_segment_id=1,
+            sep_token_extra=False,
+        )
     else:
         raise KeyError(model_arch)
 
@@ -290,6 +318,7 @@ TOKENIZER_CLASS_DICT = {
     ModelArchitectures.BART: transformers.BartTokenizer,
     ModelArchitectures.MBART: transformers.MBartTokenizer,
     ModelArchitectures.ELECTRA: transformers.ElectraTokenizer,
+    ModelArchitectures.DISTILBERT: transformers.DistilBertTokenizer,
 }
 
 
