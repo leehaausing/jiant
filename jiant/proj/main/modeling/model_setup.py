@@ -157,7 +157,8 @@ def load_encoder_from_transformers_weights(
 
 def load_lm_heads_from_transformers_weights(jiant_model, weights_dict):
     model_arch = get_model_arch_from_jiant_model(jiant_model=jiant_model)
-    if model_arch == ModelArchitectures.BERT:
+    if model_arch in [ModelArchitectures.BERT,
+                      ModelArchitectures.DISTILBERT,]:
         mlm_weights_map = {
             "bias": "cls.predictions.bias",
             "dense.weight": "cls.predictions.transform.dense.weight",
@@ -246,6 +247,7 @@ def create_taskmodel(
         ModelArchitectures.ALBERT,
         ModelArchitectures.XLM_ROBERTA,
         ModelArchitectures.ELECTRA,
+        ModelArchitectures.DISTILBERT,
     ]:
         hidden_size = encoder.config.hidden_size
         hidden_dropout_prob = encoder.config.hidden_dropout_prob
@@ -337,6 +339,13 @@ def create_taskmodel(
                 layer_norm_eps=encoder.config.layer_norm_eps,
                 hidden_act=encoder.config.hidden_act,
             )
+        elif model_arch == ModelArchitectures.DISTILBERT:
+            mlm_head = heads.BertMLMHead(
+                hidden_size=hidden_size,
+                vocab_size=encoder.config.vocab_size,
+                layer_norm_eps=encoder.config.layer_norm_eps,
+                hidden_act=encoder.config.hidden_act,
+            )
         elif model_arch == ModelArchitectures.ROBERTA:
             mlm_head = heads.RobertaMLMHead(
                 hidden_size=hidden_size,
@@ -410,6 +419,8 @@ def get_encoder(model_arch, ancestor_model):
         return ancestor_model.model
     elif model_arch == ModelArchitectures.ELECTRA:
         return ancestor_model.electra
+    elif model_arch == ModelArchitectures.DISTILBERT:
+        return ancestor_model.distilbert
     else:
         raise KeyError(model_arch)
 
@@ -457,6 +468,11 @@ TRANSFORMERS_CLASS_SPEC_DICT = {
         tokenizer_class=transformers.ElectraTokenizer,
         model_class=transformers.ElectraForPreTraining,
     ),
+    ModelArchitectures.DISTILBERT: TransformersClassSpec(
+        config_class=transformers.DistilBertConfig,
+        tokenizer_class=transformers.DistilBertTokenizer,
+        model_class=transformers.DistilBertForMaskedLM,
+    ),
 }
 
 
@@ -490,6 +506,7 @@ MODEL_PREFIX = {
     ModelArchitectures.BART: "model",
     ModelArchitectures.MBART: "model",
     ModelArchitectures.ELECTRA: "electra",
+    ModelArchitectures.DISTILBERT: "distilbert",
 }
 
 
