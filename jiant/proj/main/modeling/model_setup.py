@@ -247,7 +247,6 @@ def create_taskmodel(
         ModelArchitectures.ALBERT,
         ModelArchitectures.XLM_ROBERTA,
         ModelArchitectures.ELECTRA,
-        ModelArchitectures.DISTILBERT,
     ]:
         hidden_size = encoder.config.hidden_size
         hidden_dropout_prob = encoder.config.hidden_dropout_prob
@@ -256,6 +255,11 @@ def create_taskmodel(
         ModelArchitectures.MBART,
     ]:
         hidden_size = encoder.config.d_model
+        hidden_dropout_prob = encoder.config.dropout
+    elif model_arch in [
+        ModelArchitectures.DISTILBERT,
+    ]:
+        hidden_size = encoder.config.dim
         hidden_dropout_prob = encoder.config.dropout
     else:
         raise KeyError()
