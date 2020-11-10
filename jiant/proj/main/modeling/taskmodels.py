@@ -323,7 +323,7 @@ def get_output_from_encoder(encoder, input_ids, segment_ids, input_mask) -> Enco
         pooled, unpooled, other = get_output_from_bart_models(
             encoder=encoder, input_ids=input_ids, input_mask=input_mask,
         )
-    elif model_arch in == ModelArchitectures.DISTILBERT:
+    elif model_arch == ModelArchitectures.DISTILBERT:
         pooled, unpooled, output = get_output_from_distilbert(
             encoder=encoder, input_ids=input_ids, input_mask=input_masks,
         )
