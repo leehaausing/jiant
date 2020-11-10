@@ -32,6 +32,7 @@ def get_tokenizer(model_type, tokenizer_path):
         ModelArchitectures.BART,
         ModelArchitectures.MBART,
         ModelArchitectures.ELECTRA,
+        ModelArchitectures.DISTILBERT,
     ]:
         do_lower_case = False
     elif model_arch in [ModelArchitectures.ALBERT]:
